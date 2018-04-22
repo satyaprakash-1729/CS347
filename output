@@ -1,0 +1,72 @@
+type --> INT_TYPE
+type --> INT_TYPE
+decl_param --> type IDENT
+decl_pl --> decl_param
+type --> INT_TYPE
+decl_param --> type IDENT
+decl_pl --> decl_pl COMMA decl_param
+decl_plist --> decl_pl
+func_head --> type IDENTLP decl_plist RP
+beforestats --> BEG
+factor --> IDENT
+term_prime --> (nil)
+term --> factor term_prime
+factor --> IDENT
+term_prime --> (nil)
+term --> factor term_prime
+expression_prime --> (nil)
+expression_prime --> PLUS term expression_prime
+expr_temp --> term expression_prime
+expression --> expr_temp
+statement --> RETURN expression SEMICOLON
+statements --> (nil)
+statements --> (nil)
+statements --> statement statements
+beforeend --> beforestats statements
+opt_block --> beforeend END
+func_decl --> func_head opt_block
+external_declarations --> func_decl
+program_code --> external_declarations
+decl_plist --> (nil)
+func_head --> VOID IDENTLP decl_plist RP
+beforestats --> BEG
+type --> INT_TYPE
+ident-list -->  IDENT
+statement --> type ident-list SEMICOLON
+statements --> (nil)
+factor --> NUM
+term_prime --> (nil)
+term --> factor term_prime
+expression_prime --> (nil)
+expr_temp --> term expression_prime
+expression --> expr_temp
+statement --> IDENT ASSIGN expression SEMICOLON
+statements --> (nil)
+function -->  beforeargs argsAll RP
+factor --> NUM
+term_prime --> (nil)
+term --> factor term_prime
+expression_prime --> (nil)
+expr_temp --> term expression_prime
+expression --> expr_temp
+argsnonempty --> expression
+factor --> NUM
+term_prime --> (nil)
+term --> factor term_prime
+expression_prime --> (nil)
+expr_temp --> term expression_prime
+expression --> expr_temp
+argsnonempty --> argsnonempty COMMA expression
+argsAll --> argsnonempty
+function -->  beforeargs argsAll RP
+statement --> function SEMICOLON
+statements --> (nil)
+statements --> (nil)
+statements --> statement statements
+statements --> statement statements
+statements --> statement statements
+beforeend --> beforestats statements
+opt_block --> beforeend END
+func_decl --> func_head opt_block
+external_declarations --> func_decl
+program_code --> program_code external_declarations

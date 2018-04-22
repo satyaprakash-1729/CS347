@@ -1,0 +1,19 @@
+241
+13
+-------------------------------------------------------------
+PARSE TREE FOR THE PARSE OF THE GIVEN INPUT:
+--------------------------------------------------
+program_code                                                                                                                                                                                                                                      
+program_code                                                                                                                                                  external_declarations                                                               
+external_declarations                                                                                                                                         func_decl                                                                           
+func_decl                                                                                                                                                     func_head                  opt_block                                                
+func_head                                               opt_block                                                                                             VOID IDENTLP decl_plist RP beforeend                                            END 
+type     IDENTLP decl_plist                          RP beforeend                                                                                         END              NULL          beforestats statements                                   
+INT_TYPE         decl_pl                                beforestats statements                                                                                                           BEG         statement                     statements     
+                 decl_pl        COMMA decl_param        BEG         statement                                                                  statements                                            type     ident-list SEMICOLON NULL           
+                 decl_param           type     IDENT                RETURN expression                                                SEMICOLON NULL                                                  INT_TYPE IDENT                               
+                 type     IDENT       INT_TYPE                             expr_temp                                                                                                                                                              
+                 INT_TYPE                                                  term              expression_prime                                                                                                                                     
+                                                                           factor term_prime PLUS term              expression_prime                                                                                                              
+                                                                           IDENT  NULL            factor term_prime NULL                                                                                                                          
+                                                                                                  IDENT  NULL                                                                                                                                     

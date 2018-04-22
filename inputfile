@@ -1,0 +1,9 @@
+int main2(int a, int b){
+       return a+b;
+}
+
+void main(){
+       int ghy;
+       ghy = 56;
+       main2(56, 30);
+}

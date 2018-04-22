@@ -1,0 +1,2209 @@
+Terminals unused in grammar
+
+   DOT
+   THEN
+   ELIF
+   DO
+   COLON
+   NAME
+   PROCESSOR
+   ISRUN
+   SUBJOBS
+   GETCLSP
+   RUN
+   DISCJOB
+   ISA
+   CLSP
+   L1MEM
+   ARCHTYPE
+   L2MEM
+   LINK
+   STPNT
+   ENDPNT
+   BW
+   CHCAP
+   MEMORY
+   GETAVMEM
+   MEMTYPE
+   MEMSIZE
+   JOB
+   GETMEM
+   JOBID
+   FLOPS
+   DEADLINE
+   MEMREQ
+   AFFINITY
+   CLUSTER
+   PROCESSORS
+   TOPO
+   LINKBW
+   LINKCAP
+   PROCESSORSLIST
+   JOBS
+   SCHALGO
+   PRIOLIST
+   FINDEADLINE
+   LOADBALALGO
+   SCHEDULER
+   SCHEDULE
+
+
+Grammar
+
+    0 $accept: program_code $end
+
+    1 program_code: program_code external_declarations
+    2             | external_declarations
+
+    3 external_declarations: type ident-list SEMICOLON
+    4                      | func_decl
+
+    5 statements: statement statements
+    6           | ENDALL
+    7           | %empty
+
+    8 statement: RETURN SEMICOLON
+    9          | RETURN expression SEMICOLON
+   10          | opt_block
+   11          | IDENT ASSIGN expression SEMICOLON
+   12          | IDENT ASSIGN function SEMICOLON
+   13          | IDENTARRAY expression RSQ ASSIGN expression SEMICOLON
+   14          | expression SEMICOLON
+   15          | selection
+   16          | function SEMICOLON
+   17          | WHILE LP expression RP opt_block
+   18          | FOR LP statement expression SEMICOLON expression RP opt_block
+   19          | type ident-list SEMICOLON
+   20          | FOR LP error expression SEMICOLON expression RP opt_block
+   21          | FOR LP statement error expression RP opt_block
+   22          | FOR LP statement expression SEMICOLON error RP opt_block
+   23          | FOR LP statement expression SEMICOLON expression RP error
+   24          | IDENT ASSIGN expression error SEMICOLON
+   25          | IDENT ASSIGN error SEMICOLON
+   26          | IDENT LSQ error RSQ ASSIGN expression SEMICOLON
+   27          | IDENT LSQ expression RSQ ASSIGN error SEMICOLON
+   28          | error SEMICOLON
+
+   29 selection: ifexp opt_block
+   30          | ifexp opt_block emptyN ELSE emptyM opt_block
+   31          | IF LP error RP opt_block
+   32          | IF LP error RP opt_block ELSE opt_block
+
+   33 ifexp: IF LP expression RP
+
+   34 emptyN: %empty
+
+   35 emptyM: %empty
+
+   36 opt_block: beforeend END
+
+   37 beforeend: beforestats statements
+
+   38 beforestats: BEG
+
+   39 func_decl: func_head opt_block
+
+   40 func_head: type IDENTLP decl_plist RP
+   41          | VOID IDENTLP decl_plist RP
+
+   42 decl_plist: decl_pl
+   43           | %empty
+
+   44 decl_pl: decl_pl COMMA decl_param
+   45        | decl_param
+
+   46 decl_param: type IDENT
+
+   47 expression: expr_temp
+   48           | expr_temp RA_TERM expr_temp
+
+   49 expr_temp: term expression_prime
+
+   50 RA_TERM: LTEQ
+   51        | GTEQ
+   52        | LT
+   53        | GT
+   54        | EQ
+   55        | NEQ
+
+   56 expression_prime: PLUS term expression_prime
+   57                 | MINUS term expression_prime
+   58                 | %empty
+
+   59 term: factor term_prime
+
+   60 term_prime: MULT factor term_prime
+   61           | DIV factor term_prime
+   62           | %empty
+
+   63 factor: NUM INCR
+   64       | NUM DCR
+   65       | IDENT INCR
+   66       | IDENT DCR
+   67       | INCR IDENT
+   68       | DCR IDENT
+   69       | INCR NUM
+   70       | DCR NUM
+   71       | NUM
+   72       | IDENT
+   73       | CHAR
+   74       | FLOAT
+   75       | LP expression RP
+   76       | MINUS NUM
+
+   77 type: INT_TYPE
+   78     | FLOAT_TYPE
+   79     | CHAR_TYPE
+
+   80 ident-list: IDENT
+   81           | ident-list COMMA IDENT
+   82           | ident-list COMMA IDENTARRAY expression RSQ
+   83           | IDENTARRAY expression RSQ
+
+   84 function: beforeargs argsAll RP
+   85         | IDENTLP error RP
+
+   86 beforeargs: IDENTLP
+
+   87 argsAll: argsnonempty
+   88        | %empty
+
+   89 argsnonempty: argsnonempty COMMA expression
+   90             | expression
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256) 20 21 22 23 24 25 26 27 28 31 32 85
+RETURN (258) 8 9
+IDENT (259) 11 12 24 25 26 27 46 65 66 67 68 72 80 81
+DOT (260)
+NUM (261) 63 64 69 70 71 76
+FLOAT (262) 74
+CHAR (263) 73
+LP (264) 17 18 20 21 22 23 31 32 33 75
+RP (265) 17 18 20 21 22 23 31 32 33 40 41 75 84 85
+PLUS (266) 56
+MINUS (267) 57 76
+ASSIGN (268) 11 12 13 24 25 26 27
+DIV (269) 61
+MULT (270) 60
+IF (271) 31 32 33
+THEN (272)
+ELIF (273)
+ELSE (274) 30 32
+BEG (275) 38
+END (276) 36
+GT (277) 53
+LT (278) 52
+GTEQ (279) 51
+LTEQ (280) 50
+EQ (281) 54
+NEQ (282) 55
+FOR (283) 18 20 21 22 23
+WHILE (284) 17
+DO (285)
+LSQ (286) 26 27
+RSQ (287) 13 26 27 82 83
+COMMA (288) 44 81 82 89
+SEMICOLON (289) 3 8 9 11 12 13 14 16 18 19 20 22 23 24 25 26 27 28
+COLON (290)
+NAME (291)
+PROCESSOR (292)
+ISRUN (293)
+SUBJOBS (294)
+GETCLSP (295)
+RUN (296)
+DISCJOB (297)
+ISA (298)
+CLSP (299)
+L1MEM (300)
+ARCHTYPE (301)
+L2MEM (302)
+LINK (303)
+STPNT (304)
+ENDPNT (305)
+BW (306)
+CHCAP (307)
+MEMORY (308)
+GETAVMEM (309)
+MEMTYPE (310)
+MEMSIZE (311)
+JOB (312)
+GETMEM (313)
+JOBID (314)
+FLOPS (315)
+DEADLINE (316)
+MEMREQ (317)
+AFFINITY (318)
+CLUSTER (319)
+PROCESSORS (320)
+TOPO (321)
+LINKBW (322)
+LINKCAP (323)
+INCR (324) 63 65 67 69
+DCR (325) 64 66 68 70
+ENDALL (326) 6
+PROCESSORSLIST (327)
+JOBS (328)
+SCHALGO (329)
+PRIOLIST (330)
+FINDEADLINE (331)
+LOADBALALGO (332)
+SCHEDULER (333)
+SCHEDULE (334)
+INT_TYPE (335) 77
+FLOAT_TYPE (336) 78
+CHAR_TYPE (337) 79
+IDENTARRAY (338) 13 82 83
+IDENTLP (339) 40 41 85 86
+VOID (340) 41
+
+
+Nonterminals, with rules where they appear
+
+$accept (86)
+    on left: 0
+program_code (87)
+    on left: 1 2, on right: 0 1
+external_declarations (88)
+    on left: 3 4, on right: 1 2
+statements (89)
+    on left: 5 6 7, on right: 5 37
+statement (90)
+    on left: 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+    27 28, on right: 5 18 21 22 23
+selection (91)
+    on left: 29 30 31 32, on right: 15
+ifexp (92)
+    on left: 33, on right: 29 30
+emptyN (93)
+    on left: 34, on right: 30
+emptyM (94)
+    on left: 35, on right: 30
+opt_block (95)
+    on left: 36, on right: 10 17 18 20 21 22 29 30 31 32 39
+beforeend (96)
+    on left: 37, on right: 36
+beforestats (97)
+    on left: 38, on right: 37
+func_decl (98)
+    on left: 39, on right: 4
+func_head (99)
+    on left: 40 41, on right: 39
+decl_plist (100)
+    on left: 42 43, on right: 40 41
+decl_pl (101)
+    on left: 44 45, on right: 42 44
+decl_param (102)
+    on left: 46, on right: 44 45
+expression (103)
+    on left: 47 48, on right: 9 11 13 14 17 18 20 21 22 23 24 26 27
+    33 75 82 83 89 90
+expr_temp (104)
+    on left: 49, on right: 47 48
+RA_TERM (105)
+    on left: 50 51 52 53 54 55, on right: 48
+expression_prime (106)
+    on left: 56 57 58, on right: 49 56 57
+term (107)
+    on left: 59, on right: 49 56 57
+term_prime (108)
+    on left: 60 61 62, on right: 59 60 61
+factor (109)
+    on left: 63 64 65 66 67 68 69 70 71 72 73 74 75 76, on right: 59
+    60 61
+type (110)
+    on left: 77 78 79, on right: 3 19 40 46
+ident-list (111)
+    on left: 80 81 82 83, on right: 3 19 81 82
+function (112)
+    on left: 84 85, on right: 12 16
+beforeargs (113)
+    on left: 86, on right: 84
+argsAll (114)
+    on left: 87 88, on right: 84
+argsnonempty (115)
+    on left: 89 90, on right: 87 89
+
+
+State 0
+
+    0 $accept: . program_code $end
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+    VOID        shift, and go to state 4
+
+    program_code           go to state 5
+    external_declarations  go to state 6
+    func_decl              go to state 7
+    func_head              go to state 8
+    type                   go to state 9
+
+
+State 1
+
+   77 type: INT_TYPE .
+
+    $default  reduce using rule 77 (type)
+
+
+State 2
+
+   78 type: FLOAT_TYPE .
+
+    $default  reduce using rule 78 (type)
+
+
+State 3
+
+   79 type: CHAR_TYPE .
+
+    $default  reduce using rule 79 (type)
+
+
+State 4
+
+   41 func_head: VOID . IDENTLP decl_plist RP
+
+    IDENTLP  shift, and go to state 10
+
+
+State 5
+
+    0 $accept: program_code . $end
+    1 program_code: program_code . external_declarations
+
+    $end        shift, and go to state 11
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+    VOID        shift, and go to state 4
+
+    external_declarations  go to state 12
+    func_decl              go to state 7
+    func_head              go to state 8
+    type                   go to state 9
+
+
+State 6
+
+    2 program_code: external_declarations .
+
+    $default  reduce using rule 2 (program_code)
+
+
+State 7
+
+    4 external_declarations: func_decl .
+
+    $default  reduce using rule 4 (external_declarations)
+
+
+State 8
+
+   39 func_decl: func_head . opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 14
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 9
+
+    3 external_declarations: type . ident-list SEMICOLON
+   40 func_head: type . IDENTLP decl_plist RP
+
+    IDENT       shift, and go to state 17
+    IDENTARRAY  shift, and go to state 18
+    IDENTLP     shift, and go to state 19
+
+    ident-list  go to state 20
+
+
+State 10
+
+   41 func_head: VOID IDENTLP . decl_plist RP
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+
+    $default  reduce using rule 43 (decl_plist)
+
+    decl_plist  go to state 21
+    decl_pl     go to state 22
+    decl_param  go to state 23
+    type        go to state 24
+
+
+State 11
+
+    0 $accept: program_code $end .
+
+    $default  accept
+
+
+State 12
+
+    1 program_code: program_code external_declarations .
+
+    $default  reduce using rule 1 (program_code)
+
+
+State 13
+
+   38 beforestats: BEG .
+
+    $default  reduce using rule 38 (beforestats)
+
+
+State 14
+
+   39 func_decl: func_head opt_block .
+
+    $default  reduce using rule 39 (func_decl)
+
+
+State 15
+
+   36 opt_block: beforeend . END
+
+    END  shift, and go to state 25
+
+
+State 16
+
+   37 beforeend: beforestats . statements
+
+    error       shift, and go to state 26
+    RETURN      shift, and go to state 27
+    IDENT       shift, and go to state 28
+    NUM         shift, and go to state 29
+    FLOAT       shift, and go to state 30
+    CHAR        shift, and go to state 31
+    LP          shift, and go to state 32
+    MINUS       shift, and go to state 33
+    IF          shift, and go to state 34
+    BEG         shift, and go to state 13
+    FOR         shift, and go to state 35
+    WHILE       shift, and go to state 36
+    INCR        shift, and go to state 37
+    DCR         shift, and go to state 38
+    ENDALL      shift, and go to state 39
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+    IDENTARRAY  shift, and go to state 40
+    IDENTLP     shift, and go to state 41
+
+    END  reduce using rule 7 (statements)
+
+    statements   go to state 42
+    statement    go to state 43
+    selection    go to state 44
+    ifexp        go to state 45
+    opt_block    go to state 46
+    beforeend    go to state 15
+    beforestats  go to state 16
+    expression   go to state 47
+    expr_temp    go to state 48
+    term         go to state 49
+    factor       go to state 50
+    type         go to state 51
+    function     go to state 52
+    beforeargs   go to state 53
+
+
+State 17
+
+   80 ident-list: IDENT .
+
+    $default  reduce using rule 80 (ident-list)
+
+
+State 18
+
+   83 ident-list: IDENTARRAY . expression RSQ
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 55
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 19
+
+   40 func_head: type IDENTLP . decl_plist RP
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+
+    $default  reduce using rule 43 (decl_plist)
+
+    decl_plist  go to state 56
+    decl_pl     go to state 22
+    decl_param  go to state 23
+    type        go to state 24
+
+
+State 20
+
+    3 external_declarations: type ident-list . SEMICOLON
+   81 ident-list: ident-list . COMMA IDENT
+   82           | ident-list . COMMA IDENTARRAY expression RSQ
+
+    COMMA      shift, and go to state 57
+    SEMICOLON  shift, and go to state 58
+
+
+State 21
+
+   41 func_head: VOID IDENTLP decl_plist . RP
+
+    RP  shift, and go to state 59
+
+
+State 22
+
+   42 decl_plist: decl_pl .
+   44 decl_pl: decl_pl . COMMA decl_param
+
+    COMMA  shift, and go to state 60
+
+    $default  reduce using rule 42 (decl_plist)
+
+
+State 23
+
+   45 decl_pl: decl_param .
+
+    $default  reduce using rule 45 (decl_pl)
+
+
+State 24
+
+   46 decl_param: type . IDENT
+
+    IDENT  shift, and go to state 61
+
+
+State 25
+
+   36 opt_block: beforeend END .
+
+    $default  reduce using rule 36 (opt_block)
+
+
+State 26
+
+   28 statement: error . SEMICOLON
+
+    SEMICOLON  shift, and go to state 62
+
+
+State 27
+
+    8 statement: RETURN . SEMICOLON
+    9          | RETURN . expression SEMICOLON
+
+    IDENT      shift, and go to state 54
+    NUM        shift, and go to state 29
+    FLOAT      shift, and go to state 30
+    CHAR       shift, and go to state 31
+    LP         shift, and go to state 32
+    MINUS      shift, and go to state 33
+    SEMICOLON  shift, and go to state 63
+    INCR       shift, and go to state 37
+    DCR        shift, and go to state 38
+
+    expression  go to state 64
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 28
+
+   11 statement: IDENT . ASSIGN expression SEMICOLON
+   12          | IDENT . ASSIGN function SEMICOLON
+   24          | IDENT . ASSIGN expression error SEMICOLON
+   25          | IDENT . ASSIGN error SEMICOLON
+   26          | IDENT . LSQ error RSQ ASSIGN expression SEMICOLON
+   27          | IDENT . LSQ expression RSQ ASSIGN error SEMICOLON
+   65 factor: IDENT . INCR
+   66       | IDENT . DCR
+   72       | IDENT .
+
+    ASSIGN  shift, and go to state 65
+    LSQ     shift, and go to state 66
+    INCR    shift, and go to state 67
+    DCR     shift, and go to state 68
+
+    $default  reduce using rule 72 (factor)
+
+
+State 29
+
+   63 factor: NUM . INCR
+   64       | NUM . DCR
+   71       | NUM .
+
+    INCR  shift, and go to state 69
+    DCR   shift, and go to state 70
+
+    $default  reduce using rule 71 (factor)
+
+
+State 30
+
+   74 factor: FLOAT .
+
+    $default  reduce using rule 74 (factor)
+
+
+State 31
+
+   73 factor: CHAR .
+
+    $default  reduce using rule 73 (factor)
+
+
+State 32
+
+   75 factor: LP . expression RP
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 71
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 33
+
+   76 factor: MINUS . NUM
+
+    NUM  shift, and go to state 72
+
+
+State 34
+
+   31 selection: IF . LP error RP opt_block
+   32          | IF . LP error RP opt_block ELSE opt_block
+   33 ifexp: IF . LP expression RP
+
+    LP  shift, and go to state 73
+
+
+State 35
+
+   18 statement: FOR . LP statement expression SEMICOLON expression RP opt_block
+   20          | FOR . LP error expression SEMICOLON expression RP opt_block
+   21          | FOR . LP statement error expression RP opt_block
+   22          | FOR . LP statement expression SEMICOLON error RP opt_block
+   23          | FOR . LP statement expression SEMICOLON expression RP error
+
+    LP  shift, and go to state 74
+
+
+State 36
+
+   17 statement: WHILE . LP expression RP opt_block
+
+    LP  shift, and go to state 75
+
+
+State 37
+
+   67 factor: INCR . IDENT
+   69       | INCR . NUM
+
+    IDENT  shift, and go to state 76
+    NUM    shift, and go to state 77
+
+
+State 38
+
+   68 factor: DCR . IDENT
+   70       | DCR . NUM
+
+    IDENT  shift, and go to state 78
+    NUM    shift, and go to state 79
+
+
+State 39
+
+    6 statements: ENDALL .
+
+    $default  reduce using rule 6 (statements)
+
+
+State 40
+
+   13 statement: IDENTARRAY . expression RSQ ASSIGN expression SEMICOLON
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 80
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 41
+
+   85 function: IDENTLP . error RP
+   86 beforeargs: IDENTLP .
+
+    error  shift, and go to state 81
+
+    IDENT  reduce using rule 86 (beforeargs)
+    NUM    reduce using rule 86 (beforeargs)
+    FLOAT  reduce using rule 86 (beforeargs)
+    CHAR   reduce using rule 86 (beforeargs)
+    LP     reduce using rule 86 (beforeargs)
+    RP     reduce using rule 86 (beforeargs)
+    MINUS  reduce using rule 86 (beforeargs)
+    INCR   reduce using rule 86 (beforeargs)
+    DCR    reduce using rule 86 (beforeargs)
+
+
+State 42
+
+   37 beforeend: beforestats statements .
+
+    $default  reduce using rule 37 (beforeend)
+
+
+State 43
+
+    5 statements: statement . statements
+
+    error       shift, and go to state 26
+    RETURN      shift, and go to state 27
+    IDENT       shift, and go to state 28
+    NUM         shift, and go to state 29
+    FLOAT       shift, and go to state 30
+    CHAR        shift, and go to state 31
+    LP          shift, and go to state 32
+    MINUS       shift, and go to state 33
+    IF          shift, and go to state 34
+    BEG         shift, and go to state 13
+    FOR         shift, and go to state 35
+    WHILE       shift, and go to state 36
+    INCR        shift, and go to state 37
+    DCR         shift, and go to state 38
+    ENDALL      shift, and go to state 39
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+    IDENTARRAY  shift, and go to state 40
+    IDENTLP     shift, and go to state 41
+
+    END  reduce using rule 7 (statements)
+
+    statements   go to state 82
+    statement    go to state 43
+    selection    go to state 44
+    ifexp        go to state 45
+    opt_block    go to state 46
+    beforeend    go to state 15
+    beforestats  go to state 16
+    expression   go to state 47
+    expr_temp    go to state 48
+    term         go to state 49
+    factor       go to state 50
+    type         go to state 51
+    function     go to state 52
+    beforeargs   go to state 53
+
+
+State 44
+
+   15 statement: selection .
+
+    $default  reduce using rule 15 (statement)
+
+
+State 45
+
+   29 selection: ifexp . opt_block
+   30          | ifexp . opt_block emptyN ELSE emptyM opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 83
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 46
+
+   10 statement: opt_block .
+
+    $default  reduce using rule 10 (statement)
+
+
+State 47
+
+   14 statement: expression . SEMICOLON
+
+    SEMICOLON  shift, and go to state 84
+
+
+State 48
+
+   47 expression: expr_temp .
+   48           | expr_temp . RA_TERM expr_temp
+
+    GT    shift, and go to state 85
+    LT    shift, and go to state 86
+    GTEQ  shift, and go to state 87
+    LTEQ  shift, and go to state 88
+    EQ    shift, and go to state 89
+    NEQ   shift, and go to state 90
+
+    $default  reduce using rule 47 (expression)
+
+    RA_TERM  go to state 91
+
+
+State 49
+
+   49 expr_temp: term . expression_prime
+
+    PLUS   shift, and go to state 92
+    MINUS  shift, and go to state 93
+
+    $default  reduce using rule 58 (expression_prime)
+
+    expression_prime  go to state 94
+
+
+State 50
+
+   59 term: factor . term_prime
+
+    DIV   shift, and go to state 95
+    MULT  shift, and go to state 96
+
+    $default  reduce using rule 62 (term_prime)
+
+    term_prime  go to state 97
+
+
+State 51
+
+   19 statement: type . ident-list SEMICOLON
+
+    IDENT       shift, and go to state 17
+    IDENTARRAY  shift, and go to state 18
+
+    ident-list  go to state 98
+
+
+State 52
+
+   16 statement: function . SEMICOLON
+
+    SEMICOLON  shift, and go to state 99
+
+
+State 53
+
+   84 function: beforeargs . argsAll RP
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    $default  reduce using rule 88 (argsAll)
+
+    expression    go to state 100
+    expr_temp     go to state 48
+    term          go to state 49
+    factor        go to state 50
+    argsAll       go to state 101
+    argsnonempty  go to state 102
+
+
+State 54
+
+   65 factor: IDENT . INCR
+   66       | IDENT . DCR
+   72       | IDENT .
+
+    INCR  shift, and go to state 67
+    DCR   shift, and go to state 68
+
+    $default  reduce using rule 72 (factor)
+
+
+State 55
+
+   83 ident-list: IDENTARRAY expression . RSQ
+
+    RSQ  shift, and go to state 103
+
+
+State 56
+
+   40 func_head: type IDENTLP decl_plist . RP
+
+    RP  shift, and go to state 104
+
+
+State 57
+
+   81 ident-list: ident-list COMMA . IDENT
+   82           | ident-list COMMA . IDENTARRAY expression RSQ
+
+    IDENT       shift, and go to state 105
+    IDENTARRAY  shift, and go to state 106
+
+
+State 58
+
+    3 external_declarations: type ident-list SEMICOLON .
+
+    $default  reduce using rule 3 (external_declarations)
+
+
+State 59
+
+   41 func_head: VOID IDENTLP decl_plist RP .
+
+    $default  reduce using rule 41 (func_head)
+
+
+State 60
+
+   44 decl_pl: decl_pl COMMA . decl_param
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+
+    decl_param  go to state 107
+    type        go to state 24
+
+
+State 61
+
+   46 decl_param: type IDENT .
+
+    $default  reduce using rule 46 (decl_param)
+
+
+State 62
+
+   28 statement: error SEMICOLON .
+
+    $default  reduce using rule 28 (statement)
+
+
+State 63
+
+    8 statement: RETURN SEMICOLON .
+
+    $default  reduce using rule 8 (statement)
+
+
+State 64
+
+    9 statement: RETURN expression . SEMICOLON
+
+    SEMICOLON  shift, and go to state 108
+
+
+State 65
+
+   11 statement: IDENT ASSIGN . expression SEMICOLON
+   12          | IDENT ASSIGN . function SEMICOLON
+   24          | IDENT ASSIGN . expression error SEMICOLON
+   25          | IDENT ASSIGN . error SEMICOLON
+
+    error    shift, and go to state 109
+    IDENT    shift, and go to state 54
+    NUM      shift, and go to state 29
+    FLOAT    shift, and go to state 30
+    CHAR     shift, and go to state 31
+    LP       shift, and go to state 32
+    MINUS    shift, and go to state 33
+    INCR     shift, and go to state 37
+    DCR      shift, and go to state 38
+    IDENTLP  shift, and go to state 41
+
+    expression  go to state 110
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+    function    go to state 111
+    beforeargs  go to state 53
+
+
+State 66
+
+   26 statement: IDENT LSQ . error RSQ ASSIGN expression SEMICOLON
+   27          | IDENT LSQ . expression RSQ ASSIGN error SEMICOLON
+
+    error  shift, and go to state 112
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 113
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 67
+
+   65 factor: IDENT INCR .
+
+    $default  reduce using rule 65 (factor)
+
+
+State 68
+
+   66 factor: IDENT DCR .
+
+    $default  reduce using rule 66 (factor)
+
+
+State 69
+
+   63 factor: NUM INCR .
+
+    $default  reduce using rule 63 (factor)
+
+
+State 70
+
+   64 factor: NUM DCR .
+
+    $default  reduce using rule 64 (factor)
+
+
+State 71
+
+   75 factor: LP expression . RP
+
+    RP  shift, and go to state 114
+
+
+State 72
+
+   76 factor: MINUS NUM .
+
+    $default  reduce using rule 76 (factor)
+
+
+State 73
+
+   31 selection: IF LP . error RP opt_block
+   32          | IF LP . error RP opt_block ELSE opt_block
+   33 ifexp: IF LP . expression RP
+
+    error  shift, and go to state 115
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 116
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 74
+
+   18 statement: FOR LP . statement expression SEMICOLON expression RP opt_block
+   20          | FOR LP . error expression SEMICOLON expression RP opt_block
+   21          | FOR LP . statement error expression RP opt_block
+   22          | FOR LP . statement expression SEMICOLON error RP opt_block
+   23          | FOR LP . statement expression SEMICOLON expression RP error
+
+    error       shift, and go to state 117
+    RETURN      shift, and go to state 27
+    IDENT       shift, and go to state 28
+    NUM         shift, and go to state 29
+    FLOAT       shift, and go to state 30
+    CHAR        shift, and go to state 31
+    LP          shift, and go to state 32
+    MINUS       shift, and go to state 33
+    IF          shift, and go to state 34
+    BEG         shift, and go to state 13
+    FOR         shift, and go to state 35
+    WHILE       shift, and go to state 36
+    INCR        shift, and go to state 37
+    DCR         shift, and go to state 38
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    CHAR_TYPE   shift, and go to state 3
+    IDENTARRAY  shift, and go to state 40
+    IDENTLP     shift, and go to state 41
+
+    statement    go to state 118
+    selection    go to state 44
+    ifexp        go to state 45
+    opt_block    go to state 46
+    beforeend    go to state 15
+    beforestats  go to state 16
+    expression   go to state 47
+    expr_temp    go to state 48
+    term         go to state 49
+    factor       go to state 50
+    type         go to state 51
+    function     go to state 52
+    beforeargs   go to state 53
+
+
+State 75
+
+   17 statement: WHILE LP . expression RP opt_block
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 119
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 76
+
+   67 factor: INCR IDENT .
+
+    $default  reduce using rule 67 (factor)
+
+
+State 77
+
+   69 factor: INCR NUM .
+
+    $default  reduce using rule 69 (factor)
+
+
+State 78
+
+   68 factor: DCR IDENT .
+
+    $default  reduce using rule 68 (factor)
+
+
+State 79
+
+   70 factor: DCR NUM .
+
+    $default  reduce using rule 70 (factor)
+
+
+State 80
+
+   13 statement: IDENTARRAY expression . RSQ ASSIGN expression SEMICOLON
+
+    RSQ  shift, and go to state 120
+
+
+State 81
+
+   85 function: IDENTLP error . RP
+
+    RP  shift, and go to state 121
+
+
+State 82
+
+    5 statements: statement statements .
+
+    $default  reduce using rule 5 (statements)
+
+
+State 83
+
+   29 selection: ifexp opt_block .
+   30          | ifexp opt_block . emptyN ELSE emptyM opt_block
+
+    ELSE      reduce using rule 34 (emptyN)
+    $default  reduce using rule 29 (selection)
+
+    emptyN  go to state 122
+
+
+State 84
+
+   14 statement: expression SEMICOLON .
+
+    $default  reduce using rule 14 (statement)
+
+
+State 85
+
+   53 RA_TERM: GT .
+
+    $default  reduce using rule 53 (RA_TERM)
+
+
+State 86
+
+   52 RA_TERM: LT .
+
+    $default  reduce using rule 52 (RA_TERM)
+
+
+State 87
+
+   51 RA_TERM: GTEQ .
+
+    $default  reduce using rule 51 (RA_TERM)
+
+
+State 88
+
+   50 RA_TERM: LTEQ .
+
+    $default  reduce using rule 50 (RA_TERM)
+
+
+State 89
+
+   54 RA_TERM: EQ .
+
+    $default  reduce using rule 54 (RA_TERM)
+
+
+State 90
+
+   55 RA_TERM: NEQ .
+
+    $default  reduce using rule 55 (RA_TERM)
+
+
+State 91
+
+   48 expression: expr_temp RA_TERM . expr_temp
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expr_temp  go to state 123
+    term       go to state 49
+    factor     go to state 50
+
+
+State 92
+
+   56 expression_prime: PLUS . term expression_prime
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    term    go to state 124
+    factor  go to state 50
+
+
+State 93
+
+   57 expression_prime: MINUS . term expression_prime
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    term    go to state 125
+    factor  go to state 50
+
+
+State 94
+
+   49 expr_temp: term expression_prime .
+
+    $default  reduce using rule 49 (expr_temp)
+
+
+State 95
+
+   61 term_prime: DIV . factor term_prime
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    factor  go to state 126
+
+
+State 96
+
+   60 term_prime: MULT . factor term_prime
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    factor  go to state 127
+
+
+State 97
+
+   59 term: factor term_prime .
+
+    $default  reduce using rule 59 (term)
+
+
+State 98
+
+   19 statement: type ident-list . SEMICOLON
+   81 ident-list: ident-list . COMMA IDENT
+   82           | ident-list . COMMA IDENTARRAY expression RSQ
+
+    COMMA      shift, and go to state 57
+    SEMICOLON  shift, and go to state 128
+
+
+State 99
+
+   16 statement: function SEMICOLON .
+
+    $default  reduce using rule 16 (statement)
+
+
+State 100
+
+   90 argsnonempty: expression .
+
+    $default  reduce using rule 90 (argsnonempty)
+
+
+State 101
+
+   84 function: beforeargs argsAll . RP
+
+    RP  shift, and go to state 129
+
+
+State 102
+
+   87 argsAll: argsnonempty .
+   89 argsnonempty: argsnonempty . COMMA expression
+
+    COMMA  shift, and go to state 130
+
+    $default  reduce using rule 87 (argsAll)
+
+
+State 103
+
+   83 ident-list: IDENTARRAY expression RSQ .
+
+    $default  reduce using rule 83 (ident-list)
+
+
+State 104
+
+   40 func_head: type IDENTLP decl_plist RP .
+
+    $default  reduce using rule 40 (func_head)
+
+
+State 105
+
+   81 ident-list: ident-list COMMA IDENT .
+
+    $default  reduce using rule 81 (ident-list)
+
+
+State 106
+
+   82 ident-list: ident-list COMMA IDENTARRAY . expression RSQ
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 131
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 107
+
+   44 decl_pl: decl_pl COMMA decl_param .
+
+    $default  reduce using rule 44 (decl_pl)
+
+
+State 108
+
+    9 statement: RETURN expression SEMICOLON .
+
+    $default  reduce using rule 9 (statement)
+
+
+State 109
+
+   25 statement: IDENT ASSIGN error . SEMICOLON
+
+    SEMICOLON  shift, and go to state 132
+
+
+State 110
+
+   11 statement: IDENT ASSIGN expression . SEMICOLON
+   24          | IDENT ASSIGN expression . error SEMICOLON
+
+    error      shift, and go to state 133
+    SEMICOLON  shift, and go to state 134
+
+
+State 111
+
+   12 statement: IDENT ASSIGN function . SEMICOLON
+
+    SEMICOLON  shift, and go to state 135
+
+
+State 112
+
+   26 statement: IDENT LSQ error . RSQ ASSIGN expression SEMICOLON
+
+    RSQ  shift, and go to state 136
+
+
+State 113
+
+   27 statement: IDENT LSQ expression . RSQ ASSIGN error SEMICOLON
+
+    RSQ  shift, and go to state 137
+
+
+State 114
+
+   75 factor: LP expression RP .
+
+    $default  reduce using rule 75 (factor)
+
+
+State 115
+
+   31 selection: IF LP error . RP opt_block
+   32          | IF LP error . RP opt_block ELSE opt_block
+
+    RP  shift, and go to state 138
+
+
+State 116
+
+   33 ifexp: IF LP expression . RP
+
+    RP  shift, and go to state 139
+
+
+State 117
+
+   20 statement: FOR LP error . expression SEMICOLON expression RP opt_block
+   28          | error . SEMICOLON
+
+    IDENT      shift, and go to state 54
+    NUM        shift, and go to state 29
+    FLOAT      shift, and go to state 30
+    CHAR       shift, and go to state 31
+    LP         shift, and go to state 32
+    MINUS      shift, and go to state 33
+    SEMICOLON  shift, and go to state 62
+    INCR       shift, and go to state 37
+    DCR        shift, and go to state 38
+
+    expression  go to state 140
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 118
+
+   18 statement: FOR LP statement . expression SEMICOLON expression RP opt_block
+   21          | FOR LP statement . error expression RP opt_block
+   22          | FOR LP statement . expression SEMICOLON error RP opt_block
+   23          | FOR LP statement . expression SEMICOLON expression RP error
+
+    error  shift, and go to state 141
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 142
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 119
+
+   17 statement: WHILE LP expression . RP opt_block
+
+    RP  shift, and go to state 143
+
+
+State 120
+
+   13 statement: IDENTARRAY expression RSQ . ASSIGN expression SEMICOLON
+
+    ASSIGN  shift, and go to state 144
+
+
+State 121
+
+   85 function: IDENTLP error RP .
+
+    $default  reduce using rule 85 (function)
+
+
+State 122
+
+   30 selection: ifexp opt_block emptyN . ELSE emptyM opt_block
+
+    ELSE  shift, and go to state 145
+
+
+State 123
+
+   48 expression: expr_temp RA_TERM expr_temp .
+
+    $default  reduce using rule 48 (expression)
+
+
+State 124
+
+   56 expression_prime: PLUS term . expression_prime
+
+    PLUS   shift, and go to state 92
+    MINUS  shift, and go to state 93
+
+    $default  reduce using rule 58 (expression_prime)
+
+    expression_prime  go to state 146
+
+
+State 125
+
+   57 expression_prime: MINUS term . expression_prime
+
+    PLUS   shift, and go to state 92
+    MINUS  shift, and go to state 93
+
+    $default  reduce using rule 58 (expression_prime)
+
+    expression_prime  go to state 147
+
+
+State 126
+
+   61 term_prime: DIV factor . term_prime
+
+    DIV   shift, and go to state 95
+    MULT  shift, and go to state 96
+
+    $default  reduce using rule 62 (term_prime)
+
+    term_prime  go to state 148
+
+
+State 127
+
+   60 term_prime: MULT factor . term_prime
+
+    DIV   shift, and go to state 95
+    MULT  shift, and go to state 96
+
+    $default  reduce using rule 62 (term_prime)
+
+    term_prime  go to state 149
+
+
+State 128
+
+   19 statement: type ident-list SEMICOLON .
+
+    $default  reduce using rule 19 (statement)
+
+
+State 129
+
+   84 function: beforeargs argsAll RP .
+
+    $default  reduce using rule 84 (function)
+
+
+State 130
+
+   89 argsnonempty: argsnonempty COMMA . expression
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 150
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 131
+
+   82 ident-list: ident-list COMMA IDENTARRAY expression . RSQ
+
+    RSQ  shift, and go to state 151
+
+
+State 132
+
+   25 statement: IDENT ASSIGN error SEMICOLON .
+
+    $default  reduce using rule 25 (statement)
+
+
+State 133
+
+   24 statement: IDENT ASSIGN expression error . SEMICOLON
+
+    SEMICOLON  shift, and go to state 152
+
+
+State 134
+
+   11 statement: IDENT ASSIGN expression SEMICOLON .
+
+    $default  reduce using rule 11 (statement)
+
+
+State 135
+
+   12 statement: IDENT ASSIGN function SEMICOLON .
+
+    $default  reduce using rule 12 (statement)
+
+
+State 136
+
+   26 statement: IDENT LSQ error RSQ . ASSIGN expression SEMICOLON
+
+    ASSIGN  shift, and go to state 153
+
+
+State 137
+
+   27 statement: IDENT LSQ expression RSQ . ASSIGN error SEMICOLON
+
+    ASSIGN  shift, and go to state 154
+
+
+State 138
+
+   31 selection: IF LP error RP . opt_block
+   32          | IF LP error RP . opt_block ELSE opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 155
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 139
+
+   33 ifexp: IF LP expression RP .
+
+    $default  reduce using rule 33 (ifexp)
+
+
+State 140
+
+   20 statement: FOR LP error expression . SEMICOLON expression RP opt_block
+
+    SEMICOLON  shift, and go to state 156
+
+
+State 141
+
+   21 statement: FOR LP statement error . expression RP opt_block
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 157
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 142
+
+   18 statement: FOR LP statement expression . SEMICOLON expression RP opt_block
+   22          | FOR LP statement expression . SEMICOLON error RP opt_block
+   23          | FOR LP statement expression . SEMICOLON expression RP error
+
+    SEMICOLON  shift, and go to state 158
+
+
+State 143
+
+   17 statement: WHILE LP expression RP . opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 159
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 144
+
+   13 statement: IDENTARRAY expression RSQ ASSIGN . expression SEMICOLON
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 160
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 145
+
+   30 selection: ifexp opt_block emptyN ELSE . emptyM opt_block
+
+    $default  reduce using rule 35 (emptyM)
+
+    emptyM  go to state 161
+
+
+State 146
+
+   56 expression_prime: PLUS term expression_prime .
+
+    $default  reduce using rule 56 (expression_prime)
+
+
+State 147
+
+   57 expression_prime: MINUS term expression_prime .
+
+    $default  reduce using rule 57 (expression_prime)
+
+
+State 148
+
+   61 term_prime: DIV factor term_prime .
+
+    $default  reduce using rule 61 (term_prime)
+
+
+State 149
+
+   60 term_prime: MULT factor term_prime .
+
+    $default  reduce using rule 60 (term_prime)
+
+
+State 150
+
+   89 argsnonempty: argsnonempty COMMA expression .
+
+    $default  reduce using rule 89 (argsnonempty)
+
+
+State 151
+
+   82 ident-list: ident-list COMMA IDENTARRAY expression RSQ .
+
+    $default  reduce using rule 82 (ident-list)
+
+
+State 152
+
+   24 statement: IDENT ASSIGN expression error SEMICOLON .
+
+    $default  reduce using rule 24 (statement)
+
+
+State 153
+
+   26 statement: IDENT LSQ error RSQ ASSIGN . expression SEMICOLON
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 162
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 154
+
+   27 statement: IDENT LSQ expression RSQ ASSIGN . error SEMICOLON
+
+    error  shift, and go to state 163
+
+
+State 155
+
+   31 selection: IF LP error RP opt_block .
+   32          | IF LP error RP opt_block . ELSE opt_block
+
+    ELSE  shift, and go to state 164
+
+    $default  reduce using rule 31 (selection)
+
+
+State 156
+
+   20 statement: FOR LP error expression SEMICOLON . expression RP opt_block
+
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 165
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 157
+
+   21 statement: FOR LP statement error expression . RP opt_block
+
+    RP  shift, and go to state 166
+
+
+State 158
+
+   18 statement: FOR LP statement expression SEMICOLON . expression RP opt_block
+   22          | FOR LP statement expression SEMICOLON . error RP opt_block
+   23          | FOR LP statement expression SEMICOLON . expression RP error
+
+    error  shift, and go to state 167
+    IDENT  shift, and go to state 54
+    NUM    shift, and go to state 29
+    FLOAT  shift, and go to state 30
+    CHAR   shift, and go to state 31
+    LP     shift, and go to state 32
+    MINUS  shift, and go to state 33
+    INCR   shift, and go to state 37
+    DCR    shift, and go to state 38
+
+    expression  go to state 168
+    expr_temp   go to state 48
+    term        go to state 49
+    factor      go to state 50
+
+
+State 159
+
+   17 statement: WHILE LP expression RP opt_block .
+
+    $default  reduce using rule 17 (statement)
+
+
+State 160
+
+   13 statement: IDENTARRAY expression RSQ ASSIGN expression . SEMICOLON
+
+    SEMICOLON  shift, and go to state 169
+
+
+State 161
+
+   30 selection: ifexp opt_block emptyN ELSE emptyM . opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 170
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 162
+
+   26 statement: IDENT LSQ error RSQ ASSIGN expression . SEMICOLON
+
+    SEMICOLON  shift, and go to state 171
+
+
+State 163
+
+   27 statement: IDENT LSQ expression RSQ ASSIGN error . SEMICOLON
+
+    SEMICOLON  shift, and go to state 172
+
+
+State 164
+
+   32 selection: IF LP error RP opt_block ELSE . opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 173
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 165
+
+   20 statement: FOR LP error expression SEMICOLON expression . RP opt_block
+
+    RP  shift, and go to state 174
+
+
+State 166
+
+   21 statement: FOR LP statement error expression RP . opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 175
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 167
+
+   22 statement: FOR LP statement expression SEMICOLON error . RP opt_block
+
+    RP  shift, and go to state 176
+
+
+State 168
+
+   18 statement: FOR LP statement expression SEMICOLON expression . RP opt_block
+   23          | FOR LP statement expression SEMICOLON expression . RP error
+
+    RP  shift, and go to state 177
+
+
+State 169
+
+   13 statement: IDENTARRAY expression RSQ ASSIGN expression SEMICOLON .
+
+    $default  reduce using rule 13 (statement)
+
+
+State 170
+
+   30 selection: ifexp opt_block emptyN ELSE emptyM opt_block .
+
+    $default  reduce using rule 30 (selection)
+
+
+State 171
+
+   26 statement: IDENT LSQ error RSQ ASSIGN expression SEMICOLON .
+
+    $default  reduce using rule 26 (statement)
+
+
+State 172
+
+   27 statement: IDENT LSQ expression RSQ ASSIGN error SEMICOLON .
+
+    $default  reduce using rule 27 (statement)
+
+
+State 173
+
+   32 selection: IF LP error RP opt_block ELSE opt_block .
+
+    $default  reduce using rule 32 (selection)
+
+
+State 174
+
+   20 statement: FOR LP error expression SEMICOLON expression RP . opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 178
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 175
+
+   21 statement: FOR LP statement error expression RP opt_block .
+
+    $default  reduce using rule 21 (statement)
+
+
+State 176
+
+   22 statement: FOR LP statement expression SEMICOLON error RP . opt_block
+
+    BEG  shift, and go to state 13
+
+    opt_block    go to state 179
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 177
+
+   18 statement: FOR LP statement expression SEMICOLON expression RP . opt_block
+   23          | FOR LP statement expression SEMICOLON expression RP . error
+
+    error  shift, and go to state 180
+    BEG    shift, and go to state 13
+
+    opt_block    go to state 181
+    beforeend    go to state 15
+    beforestats  go to state 16
+
+
+State 178
+
+   20 statement: FOR LP error expression SEMICOLON expression RP opt_block .
+
+    $default  reduce using rule 20 (statement)
+
+
+State 179
+
+   22 statement: FOR LP statement expression SEMICOLON error RP opt_block .
+
+    $default  reduce using rule 22 (statement)
+
+
+State 180
+
+   23 statement: FOR LP statement expression SEMICOLON expression RP error .
+
+    $default  reduce using rule 23 (statement)
+
+
+State 181
+
+   18 statement: FOR LP statement expression SEMICOLON expression RP opt_block .
+
+    $default  reduce using rule 18 (statement)

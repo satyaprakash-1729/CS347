@@ -1,0 +1,333 @@
+statements:
+statement statements 
+| ENDALL 
+| %empty 
+;
+statement:
+IDENT ASSIGN expression SEMICOLON 
+| IDENT LSQ expression RSQ ASSIGN expression SEMICOLON 
+| expression SEMICOLON 
+| selection 
+ | function SEMICOLON 
+| WHILE LP expression RP opt_block 
+| type ident-list
+| FOR LP statement expression SEMICOLON expression RP opt_block 
+//////////////////ERROR HANDLING////////////////////
+| FOR LP error expression SEMICOLON expression RP opt_block 
+| FOR LP statement error expression RP opt_block 
+| FOR LP statement expression SEMICOLON error RP opt_block 
+| FOR LP statement expression SEMICOLON expression RP error 
+| IDENT ASSIGN expression error SEMICOLON 
+| IDENT ASSIGN error SEMICOLON 
+| IDENT LSQ error RSQ ASSIGN expression SEMICOLON 
+| IDENT LSQ expression RSQ ASSIGN error SEMICOLON 
+| error SEMICOLON 
+//////////////////////////////////////////////////
+;
+
+statement-with-else:
+IDENT ASSIGN expression SEMICOLON 
+| IDENT LSQ expression RSQ ASSIGN expression SEMICOLON 
+| expression SEMICOLON 
+| selection-with-else 
+| type ident-list
+ | function SEMICOLON 
+| WHILE LP expression RP opt_block 
+| FOR LP statement expression SEMICOLON expression RP opt_block 
+//////////////////ERROR HANDLING////////////////////
+| FOR LP error expression SEMICOLON expression RP opt_block 
+| FOR LP statement error expression RP opt_block 
+| FOR LP statement expression SEMICOLON error RP opt_block 
+| FOR LP statement expression SEMICOLON expression RP error 
+| IDENT ASSIGN expression error SEMICOLON 
+| IDENT ASSIGN error SEMICOLON 
+| IDENT LSQ error RSQ ASSIGN expression SEMICOLON 
+| IDENT LSQ expression RSQ ASSIGN error SEMICOLON 
+| error SEMICOLON 
+//////////////////////////////////////////////////
+;
+selection:
+    IF LP expression RP selection_prime 
+| IF LP error RP selection_prime 
+;
+selection_prime:    
+opt_block 
+| opt_block ELSE opt_block 
+| opt_block ELSE statement 
+| statement  
+| statement-with-else ELSE opt_block 
+| statement-with-else ELSE statement 
+;    
+selection-with-else:
+    IF LP expression RP selection-with-else_prime 
+;
+selection-with-else_prime:
+    statement-with-else ELSE opt_block 
+    | opt_block ELSE statement-with-else 
+    | statement-with-else ELSE statement-with-else 
+;
+opt_block:
+BEG statements END 
+;
+
+expression:
+expr_temp 
+| expr_temp RA_TERM expr_temp 
+;
+
+expr_temp:
+term expression_prime 
+ | constructor 
+ | IDENT DOT method 
+;
+
+RA_TERM: 
+LTEQ 
+| GTEQ 
+| LT  
+| GT  
+| EQ  
+| NEQ  
+;
+
+expression_prime:
+PLUS term expression_prime 
+| MINUS term expression_prime 
+| %empty 
+;
+term:
+factor term_prime 
+;
+term_prime:
+MULT factor term_prime 
+| DIV factor term_prime 
+| %empty 
+;
+factor:
+NUM INCR 
+| NUM DCR 
+| IDENT INCR 
+| IDENT DCR 
+
+| INCR IDENT 
+| DCR IDENT 
+| INCR NUM 
+| DCR NUM 
+
+| NUM 
+| IDENT 
+| STRING 
+| FLOAT 
+| LSQ array RSQ 
+| LP expression RP 
+| MINUS NUM 
+;
+array:
+expression array_prime 
+;
+array_prime:
+COMMA expression array_prime 
+| %empty 
+;
+
+type:
+
+| float
+
+constructor:
+ PROCESSOR LP argsPROC RP 
+ | PROCESSOR LP error RP 
+ | LINK LP argsLINK RP 
+ | LINK LP error RP 
+ | MEMORY LP argsMEM RP 
+ | MEMORY LP error RP 
+ | JOB LP argsJOB RP 
+ | JOB LP error RP 
+ | CLUSTER LP argsCLUSTER RP 
+ | CLUSTER LP error RP 
+ | SCHEDULER LP argsScheduler RP 
+ | SCHEDULER LP error RP 
+;
+function:
+ RUN LP argsRUN RP 
+ | RUN LP error RP 
+ | DISCJOB LP argsDISCJOB RP 
+ | DISCJOB LP error RP 
+ | IDENT LP argsAll RP  
+ | IDENT LP error RP  
+ ;
+ argsAll:
+ argsnonempty 
+ | %empty 
+ ;
+argsnonempty:
+ IDENT ASSIGN expression COMMA argsnonempty 
+ | expression COMMA argsnonempty 
+ | expression 
+ | IDENT ASSIGN expression 
+
+method: 
+ ISRUN LP argsISRUN RP 
+ | SUBJOBS LP argsSUBJOBS RP 
+ | GETCLSP LP argsGETCLSP RP 
+ | GETAVMEM LP argsGETAVMEM RP  
+ | GETMEM LP argsGETMEM RP 
+ | SCHEDULE LP argsSchedule RP 
+ ;
+ argsRUN:
+  expression 
+  ;
+argsISRUN:
+ %empty 
+ ;
+argsSUBJOBS: 
+expression 
+;
+argsGETCLSP:
+ %empty 
+ ;
+argsDISCJOB:
+expression 
+;
+argsGETAVMEM:
+%empty 
+;
+argsGETMEM:
+ %empty 
+ ;
+argsPROC:
+isaterm expression COMMA clspterm expression COMMA l1memterm expression l2memterm 
+;
+
+archterm:
+COMMA ARCHTYPE ASSIGN expression nameterm 
+| nameterm 
+;
+nameterm:
+COMMA NAME ASSIGN expression 
+| %empty 
+| COMMA expression 
+;
+isaterm:
+ISA ASSIGN 
+| %empty 
+;
+clspterm:
+CLSP COLON 
+| %empty 
+;
+l1memterm:
+L1MEM ASSIGN 
+| %empty 
+;
+l2memterm:
+COMMA L2MEM ASSIGN expression archterm 
+| archterm 
+;
+
+argsLINK:
+stpntterm expression COMMA endpntterm expression COMMA bwterm expression chcapterm nameterm 
+;
+stpntterm:
+STPNT ASSIGN 
+| %empty 
+;
+endpntterm:
+ENDPNT  ASSIGN 
+| %empty 
+;
+bwterm:
+ BW  ASSIGN 
+ | %empty 
+ ;
+chcapterm:
+CHCAP  ASSIGN 
+| %empty 
+;
+
+argsMEM:
+ memtypeterm  expression COMMA memsizeterm  expression nameterm 
+ ;
+memtypeterm:
+MEMTYPE ASSIGN 
+| %empty 
+;
+memsizeterm:
+ MEMSIZE ASSIGN 
+ | %empty 
+ ;
+
+ argsJOB:
+  jobidterm expression COMMA flopterm expression COMMA deadterm expression COMMA memreqterm expression COMMA affineterm expression 
+  ;
+jobidterm:
+JOBID ASSIGN 
+| %empty 
+;
+flopterm:
+FLOPS ASSIGN 
+| %empty 
+;
+deadterm:
+DEADLINE ASSIGN 
+| %empty 
+;
+memreqterm: 
+MEMREQ ASSIGN 
+| %empty 
+;
+affineterm:
+AFFINITY ASSIGN 
+| %empty 
+; 
+
+argsCLUSTER:
+processorsterm expression COMMA topoterm expression COMMA linkbwterm expression COMMA linkcapterm expression nameterm 
+;
+processorsterm: 
+PROCESSORS ASSIGN 
+| %empty 
+;
+topoterm:
+TOPO ASSIGN 
+| %empty 
+;
+linkbwterm:  
+LINKBW ASSIGN 
+| %empty 
+;
+linkcapterm:
+LINKCAP ASSIGN 
+| %empty 
+;
+
+argsScheduler:
+scheduling_algoTerm expression COMMA load_balancing_algoTerm expression nameterm 
+;
+argsSchedule:
+processors_listTerm expression COMMA jobsTerm expression COMMA  priority_listTerm expression COMMA final_deadlineTerm expression 
+;
+processors_listTerm:
+PROCESSORSLIST ASSIGN 
+| %empty 
+;
+jobsTerm:
+JOBS ASSIGN 
+| %empty 
+;
+scheduling_algoTerm:
+SCHALGO ASSIGN 
+| %empty 
+;
+priority_listTerm:
+PRIOLIST ASSIGN 
+| %empty 
+;
+final_deadlineTerm:
+FINDEADLINE ASSIGN 
+| %empty 
+;
+load_balancing_algoTerm:
+LOADBALALGO ASSIGN 
+| %empty 
+;
